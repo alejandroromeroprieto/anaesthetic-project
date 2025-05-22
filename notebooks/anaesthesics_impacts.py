@@ -1,5 +1,5 @@
 # %%
-import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import xarray as xr
@@ -36,8 +36,13 @@ f.define_scenarios(scenarios)
 # 4. Define configs
 
 # %%
-# Look for len(configs)
-configs = ["high", "central", "low"]
+# Old simple configs
+# configs = ["high", "central", "low"]
+# f.define_configs(configs)
+
+fair_params_1_4_0 = '../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv'
+df_configs = pd.read_csv(fair_params_1_4_0, index_col=0)[400:]
+configs = df_configs.index  # label for the "config" axis
 f.define_configs(configs)
 
 # %% [markdown]
@@ -136,7 +141,7 @@ initialise(f.airborne_emissions, 0)
 
 # %%
 
-f.override_defaults('../data/fair-calibration/configs_ensemble_simple.csv')
+f.override_defaults('../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv')
 
 # %% [markdown]
 # 9 Run FaIR
@@ -170,7 +175,9 @@ initialise(f_no_anesthesics.forcing, 0)
 initialise(f_no_anesthesics.temperature, 0)
 initialise(f_no_anesthesics.cumulative_emissions, 0)
 initialise(f_no_anesthesics.airborne_emissions, 0)
-f_no_anesthesics.override_defaults('../data/fair-calibration/configs_ensemble_simple.csv')
+f_no_anesthesics.override_defaults('../data/fair-calibration/calibrated_constrained_parameters_1.4.0.csv')
+
+# %%
 f_no_anesthesics.run()
 
 # %%
@@ -179,11 +186,52 @@ scenario_to_compare = "ssp245"
 temperature_anomalies = f.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
 
 # %%
-pl.plot(f.timebounds[150:], temperature_anomalies[150:], label=f.configs)
-pl.title('Central scenario: temperature')
-pl.xlabel('year')
-pl.ylabel('Temperature anomaly (K)')
-pl.legend()
-pl.show()
+plt.plot(f.timebounds[150:], temperature_anomalies[150:])
+plt.title('Central scenario: temperature')
+plt.xlabel('year')
+plt.ylabel('Temperature anomaly (K)')
+plt.show()
+
+# %% [markdown]
+# Same plot with standard deviation, rather than simply all the projections printed to screen
 
 # %%
+# Slice the relevant part of the data
+time = f.timebounds[150:]
+temp = temperature_anomalies[150:]
+
+# Compute mean and standard deviation over 'config'
+mean_temp = temp.mean(dim='config')
+std_temp = temp.std(dim='config')
+
+# Convert to numpy for plotting
+time_np = time
+mean_np = mean_temp.values
+std_np = std_temp.values
+
+# Plot the mean with a shaded area for ±1 std dev
+plt.plot(time_np, mean_np, label='Mean')
+plt.fill_between(time_np, mean_np - std_np, mean_np + std_np, alpha=0.3, label='±1 std dev')
+
+plt.title('Central scenario: temperature')
+plt.xlabel('Year')
+plt.ylabel('Temperature anomaly (K)')
+plt.legend()
+plt.show()
+
+# %% [markdown]
+# 5-95th percentiles
+
+# %%
+p05 = temp.quantile(0.05, dim='config')
+p95 = temp.quantile(0.95, dim='config')
+
+# Plot the mean with a shaded area for 5-95 percentile
+plt.plot(time_np, mean_np, label='Mean')
+plt.fill_between(time_np, p05, p95, alpha=0.3, label='5-95% percentile')
+
+plt.title('Central scenario: temperature')
+plt.xlabel('Year')
+plt.ylabel('Temperature anomaly (K)')
+plt.legend()
+plt.show()
