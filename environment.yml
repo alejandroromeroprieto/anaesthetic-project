@@ -1,0 +1,13 @@
+name: anaesthesics-project
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - fair=2.2.2
+  - jupyter
+  - jupytext
+  - matplotlib
+  - netcdf4
+  - numpy
+  - pandas
+  - xarray
