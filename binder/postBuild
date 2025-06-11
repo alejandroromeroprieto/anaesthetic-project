@@ -1,0 +1,3 @@
+#!/bin/bash
+jupyter labextension install @jupyterlab/jupytext
+jupyter serverextension enable --py jupytext

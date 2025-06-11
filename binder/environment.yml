@@ -5,6 +5,7 @@ dependencies:
   - python=3.12
   - fair=2.2.2
   - jupyter
+  - jupyterlab
   - jupytext
   - matplotlib
   - netcdf4
