@@ -44,7 +44,7 @@ f.define_configs(configs)
 # 5. Define species and properties
 
 # %%
-species, properties = read_properties("/home/eearp/code/helping_tom/FAIR/src/fair/anesthesics/species_configs_properties_1.4.0_anesthesics.csv")
+species, properties = read_properties("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
 f.define_species(species, properties)
 
 # %% [markdown]
