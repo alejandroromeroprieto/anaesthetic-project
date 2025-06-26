@@ -16,13 +16,13 @@ from fair.interface import initialise
 # 1. Initialise FaIR
 
 # %%
-f = FAIR()
+f_inhaled = FAIR()
 
 # %% [markdown]
 # 2. Define time horizon
 
 # %%
-f.define_time(1750, 2500, 1)
+f_inhaled.define_time(1750, 2500, 1)
 
 # %% [markdown]
 # 3. Define scenarios
@@ -30,7 +30,7 @@ f.define_time(1750, 2500, 1)
 # %%
 # scenarios = ['ssp119', 'ssp126', 'ssp245', 'ssp370', 'ssp434', 'ssp460', 'ssp534-over', 'ssp585']
 scenarios = ["ssp119", "ssp245", "ssp585"]
-f.define_scenarios(scenarios)
+f_inhaled.define_scenarios(scenarios)
 
 # %% [markdown]
 # 4. Define configs
@@ -41,16 +41,16 @@ f.define_scenarios(scenarios)
 # f.define_configs(configs)
 
 fair_params_1_4_0 = '../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv'
-df_configs = pd.read_csv(fair_params_1_4_0, index_col=0)[400:]
+df_configs = pd.read_csv(fair_params_1_4_0, index_col=0)[400:500]
 configs = df_configs.index  # label for the "config" axis
-f.define_configs(configs)
+f_inhaled.define_configs(configs)
 
 # %% [markdown]
 # 5. Define species and properties
 
 # %%
 species, properties = read_properties("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
-f.define_species(species, properties)
+f_inhaled.define_species(species, properties)
 
 # %% [markdown]
 # 6. Modify run options (optional)
@@ -59,13 +59,13 @@ f.define_species(species, properties)
 # 7. Initialise arrays
 
 # %%
-f.allocate()
+f_inhaled.allocate()
 
 # %% [markdown]
 # 8. Fill in data
 
 # %%
-f.fill_from_csv(
+f_inhaled.fill_from_csv(
     forcing_file='../data/forcing/volcanic_solar.csv',
 )
 
@@ -74,9 +74,21 @@ f.fill_from_csv(
 # this is from calibration-1.4.0
 da_emissions = xr.load_dataarray("../data/emissions/ssp_emissions_1750-2500_anesthesics.nc")
 output_ensemble_size = len(configs)
-da = da_emissions.loc[dict(config="unspecified", scenario=scenarios)]
-fe = da.expand_dims(dim=["config"], axis=(2))
-f.emissions = fe.drop_vars(("config")) * np.ones((1, 1, output_ensemble_size, 1))
+da = da_emissions.loc[dict(config="unspecified", scenario=scenarios)] # select which scenarios we are going to run from the emissions data
+fe = da.expand_dims(dim=["config"], axis=(2)) #  Create an object with those scenarios for each possible configuration
+f_inhaled.emissions = fe.drop_vars(("config")) * np.ones((1, 1, output_ensemble_size, 1))
+
+# %%
+# # da.loc[dict(specie='CO2 FFI')] = new_values
+# anes_emissions = np.zeros(750)
+# anes_0_emissions[274:] = 4.5 * 0.0001
+
+# f.emissions.loc[dict(specie='CO2 FFI')] = f.emissions.loc[dict(specie='CO2 FFI')] + anes_0_emissions[:, np.newaxis, np.newaxis]
+# # f.emissions
+# f.emissions['specie'].values
+# f.emissions.loc[dict(specie='CO2 FFI')]
+
+# %%
 
 # %%
 # Fill anesthesics
@@ -112,45 +124,120 @@ emissions_3 = np.repeat(emissions_3, len(configs), axis=2)
 
 
 # %%
-fill(f.emissions, emissions_1, specie="HFE-236ea2")
-fill(f.emissions, emissions_2, specie="HFE-347mmz1")
-fill(f.emissions, emissions_3, specie="HCFE-235da2")
-fill(f.emissions, 0, specie="Halon-2311")
-
-# %%
+fill(f_inhaled.emissions, emissions_1, specie="HFE-236ea2")
+fill(f_inhaled.emissions, emissions_2, specie="HFE-347mmz1")
+fill(f_inhaled.emissions, emissions_3, specie="HCFE-235da2")
+fill(f_inhaled.emissions, 0, specie="Halon-2311")
 
 # %% [markdown]
 # 8a. Fill in data - species configs
 
 # %%
-f.fill_species_configs("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
+f_inhaled.fill_species_configs("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
 
 # %% [markdown]
 # 8b. Fill in data - emissions
 
 # %%
 # initialising 
-initialise(f.concentration, f.species_configs["baseline_concentration"])
-initialise(f.forcing, 0)
-initialise(f.temperature, 0)
-initialise(f.cumulative_emissions, 0)
-initialise(f.airborne_emissions, 0)
+initialise(f_inhaled.concentration, f_inhaled.species_configs["baseline_concentration"])
+initialise(f_inhaled.forcing, 0)
+initialise(f_inhaled.temperature, 0)
+initialise(f_inhaled.cumulative_emissions, 0)
+initialise(f_inhaled.airborne_emissions, 0)
 
 # %% [markdown]
 # 8c. Fill in data - climate configs
 
 # %%
 
-f.override_defaults('../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv')
+f_inhaled.override_defaults('../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv')
 
 # %% [markdown]
 # 9 Run FaIR
 
 # %%
-f.run()
+f_inhaled.run()
 
 # %% [markdown]
 # 10 Pretty plots!
+
+# %%
+# Run twin experiment, but for an abrupt change to TIVA interventions
+# The scenario assumption is an abrupt change of type of anaesthesia from inhaled to TIVA types,
+# where emissions from inhaled species go to 0 in 2025 and TIVA-related emissions of CO2 go to 0.00045 GtC/year.
+# Note that overwriting the data for the inhaled anaesthesics is necessary because the data file we are currently using has the wrong data
+# TODO: We should probably update ssp_emissions_1750-2500.nc file at some point to have this data directly
+f_tiva = FAIR()
+f_tiva.define_time(1750, 2500, 1)
+f_tiva.define_scenarios(scenarios)
+f_tiva.define_configs(configs)
+species_tiva, properties_tiva = read_properties("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
+f_tiva.define_species(species_tiva, properties_tiva)
+f_tiva.allocate()
+f_tiva.fill_from_csv(
+    forcing_file='../data/forcing/volcanic_solar.csv',
+)
+da_emissions = xr.load_dataarray("../data/emissions/ssp_emissions_1750-2500_anesthesics.nc")
+output_ensemble_size = len(configs)
+da = da_emissions.loc[dict(config="unspecified", scenario=scenarios)]
+fe = da.expand_dims(dim=["config"], axis=(2))
+f_tiva.emissions = fe.drop_vars(("config")) * np.ones((1, 1, output_ensemble_size, 1))
+
+# Load inhaled emissions, but set them at 0 after 2025
+# Prepare the new emissions
+anesthesics_df = pd.read_csv("../data/emissions/anesthesics_gas_emissions.csv")
+
+species1_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "HFE-236ea2") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_1 = species1_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_1[275:, :] = 0
+emissions_1 = emissions_1[:, :, np.newaxis]
+emissions_1 = np.repeat(emissions_1, len(configs), axis=2)
+
+species2_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "HFE-347mmz1") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_2 = species2_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_2[275:, :] = 0
+emissions_2 = emissions_2[:, :, np.newaxis]
+emissions_2 = np.repeat(emissions_2, len(configs), axis=2)
+
+species3_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "HCFE-235da2") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_3 = species3_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_3[275:, :] = 0
+emissions_3 = emissions_3[:, :, np.newaxis]
+emissions_3 = np.repeat(emissions_3, len(configs), axis=2)
+
+fill(f_tiva.emissions, emissions_1, specie="HFE-236ea2")
+fill(f_tiva.emissions, emissions_2, specie="HFE-347mmz1")
+fill(f_tiva.emissions, emissions_3, specie="HCFE-235da2")
+fill(f_tiva.emissions, 0, specie="Halon-2311")
+
+# Add TIVA:
+# 0.5 kg of plastic waster per intervention * 300 millions of interventions = 150 millions Kg of plastic waster
+# ~3 Kg of CO2 emissions per Kg of plastic waster burned * 150 millions of kg of plastic waste = 450 millions of CO2 = 0.00045 GtC
+TIVA_emissions = np.zeros(750)
+TIVA_emissions[275:] = 4.5 * 0.0001
+
+f_tiva.emissions.loc[dict(specie='CO2 FFI')] = f_tiva.emissions.loc[dict(specie='CO2 FFI')] + TIVA_emissions[:, np.newaxis, np.newaxis]
+
+f_tiva.fill_species_configs("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
+initialise(f_tiva.concentration, f_tiva.species_configs["baseline_concentration"])
+initialise(f_tiva.forcing, 0)
+initialise(f_tiva.temperature, 0)
+initialise(f_tiva.cumulative_emissions, 0)
+initialise(f_tiva.airborne_emissions, 0)
+f_tiva.override_defaults('../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv')
+
+f_tiva.run()
+
 
 # %%
 # Run twin experiment, but without anesthesics
@@ -158,8 +245,8 @@ f_no_anesthesics = FAIR()
 f_no_anesthesics.define_time(1750, 2500, 1)
 f_no_anesthesics.define_scenarios(scenarios)
 f_no_anesthesics.define_configs(configs)
-species, properties = read_properties("../data/fair-calibration/species_configs_properties_1.4.0_original.csv")
-f_no_anesthesics.define_species(species, properties)
+species_no_anaesthesics, properties_no_anaesthesics = read_properties("../data/fair-calibration/species_configs_properties_1.4.0_original.csv")
+f_no_anesthesics.define_species(species_no_anaesthesics, properties_no_anaesthesics)
 f_no_anesthesics.allocate()
 f_no_anesthesics.fill_from_csv(
     forcing_file='../data/forcing/volcanic_solar.csv',
@@ -177,17 +264,18 @@ initialise(f_no_anesthesics.cumulative_emissions, 0)
 initialise(f_no_anesthesics.airborne_emissions, 0)
 f_no_anesthesics.override_defaults('../data/fair-calibration/calibrated_constrained_parameters_1.4.0.csv')
 
-# %%
 f_no_anesthesics.run()
 
 # %%
-# Plot comparison between anesthesics and no anesthesics
+# Calculate temperature anomaly differences between experiments
 scenario_to_compare = "ssp245"
-temperature_anomalies = f.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+temp_ano_inhaled_vs_reference = f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+temp_ano_tiva_vs_reference = f_tiva.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+temp_ano_tiva_vs_inhaled = f_tiva.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
 
 # %%
-plt.plot(f.timebounds[150:], temperature_anomalies[150:])
-plt.title('Central scenario: temperature')
+plt.plot(f_inhaled.timebounds[150:], temp_ano_inhaled_vs_reference[150:])
+plt.title('Central scenario: temperature anomaly of inhaled vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
 plt.show()
@@ -197,23 +285,23 @@ plt.show()
 
 # %%
 # Slice the relevant part of the data
-time = f.timebounds[150:]
-temp = temperature_anomalies[150:]
+time_inhaled = f_inhaled.timebounds[150:]
+temp_inhaled = temp_ano_inhaled_vs_reference[150:]
 
 # Compute mean and standard deviation over 'config'
-mean_temp = temp.mean(dim='config')
-std_temp = temp.std(dim='config')
+mean_temp_inhaled = temp_inhaled.mean(dim='config')
+std_temp_inhaled = temp_inhaled.std(dim='config')
 
 # Convert to numpy for plotting
-time_np = time
-mean_np = mean_temp.values
-std_np = std_temp.values
+time_np_inhaled = time_inhaled
+mean_np_inhaled = mean_temp_inhaled.values
+std_np_inhaled = std_temp_inhaled.values
 
 # Plot the mean with a shaded area for ±1 std dev
-plt.plot(time_np, mean_np, label='Mean')
-plt.fill_between(time_np, mean_np - std_np, mean_np + std_np, alpha=0.3, label='±1 std dev')
+plt.plot(time_np_inhaled, mean_np_inhaled, label='Mean')
+plt.fill_between(time_np_inhaled, mean_np_inhaled - std_np_inhaled, mean_np_inhaled + std_np_inhaled, alpha=0.3, label='±1 std dev')
 
-plt.title('Central scenario: temperature')
+plt.title('Central scenario: temperature anomaly of inhaled vs reference')
 plt.xlabel('Year')
 plt.ylabel('Temperature anomaly (K)')
 plt.legend()
@@ -223,15 +311,182 @@ plt.show()
 # 5-95th percentiles
 
 # %%
-p05 = temp.quantile(0.05, dim='config')
-p95 = temp.quantile(0.95, dim='config')
+p05_inhaled = temp_inhaled.quantile(0.05, dim='config')
+p95_inhaled = temp_inhaled.quantile(0.95, dim='config')
 
 # Plot the mean with a shaded area for 5-95 percentile
-plt.plot(time_np, mean_np, label='Mean')
-plt.fill_between(time_np, p05, p95, alpha=0.3, label='5-95% percentile')
+plt.plot(time_np_inhaled, mean_np_inhaled, label='Mean')
+plt.fill_between(time_np_inhaled, p05_inhaled, p95_inhaled, alpha=0.3, label='5-95% percentile')
 
 plt.title('Central scenario: temperature')
 plt.xlabel('Year')
 plt.ylabel('Temperature anomaly (K)')
 plt.legend()
+plt.show()
+
+# %%
+# Same plots as before but for T
+
+plt.plot(f_tiva.timebounds[150:], temp_ano_tiva_vs_reference[150:])
+plt.title('Central scenario: temperature anomaly of TIVA-abrupt vs reference')
+plt.xlabel('year')
+plt.ylabel('Temperature anomaly (K)')
+plt.show()
+
+# %%
+# Slice the relevant part of the data
+time_tiva = f_tiva.timebounds[150:]
+temp_tiva = temp_ano_tiva_vs_reference[150:]
+
+# Compute mean and standard deviation over 'config'
+mean_temp_tiva = temp_tiva.mean(dim='config')
+std_temp_tiva = temp_tiva.std(dim='config')
+
+# Convert to numpy for plotting
+time_np_tiva = time_tiva
+mean_np_tiva = mean_temp_tiva.values
+std_np_tiva = std_temp_tiva.values
+
+p05_tiva = temp_tiva.quantile(0.05, dim='config')
+p95_tiva = temp_tiva.quantile(0.95, dim='config')
+
+
+# Plot the mean with a shaded area for 5-95 percentile
+plt.plot(time_np_tiva, mean_np_tiva, label='Mean')
+plt.fill_between(time_np_tiva, p05_tiva, p95_tiva, alpha=0.3, label='5-95% percentile')
+
+plt.title('Central scenario: temperature')
+plt.xlabel('Year')
+plt.ylabel('Temperature anomaly (K)')
+plt.legend()
+plt.show()
+
+# %%
+#Comparing temperature anomaly distribution of temperature increases for inhaled (business as usual) and TIVA-abrup scenarios
+# Inhaled
+plt.plot(time_np_inhaled, mean_np_inhaled, label='Mean Inhaled vs reference')
+plt.fill_between(time_np_inhaled, p05_inhaled, p95_inhaled, alpha=0.3, label='5-95% percentile Inhaled vs reference')
+
+# TIVA
+plt.plot(time_np_tiva, mean_np_tiva, label='Mean TIVA-abrupt vs reference')
+plt.fill_between(time_np_tiva, p05_tiva, p95_tiva, alpha=0.3, label='5-95% percentile TIVA-abrupt vs reference')
+
+plt.title('Central scenario: temperature')
+plt.xlabel('Year')
+plt.ylabel('Temperature anomaly (K)')
+plt.legend()
+plt.show()
+
+# %%
+# Temperature anomaly between business as usual (inhaled) and abrupt TIVA 
+# Slice the relevant part of the data
+time_tiva_vs_inhaled = f_tiva.timebounds[275:]
+temp_tiva_vs_inhaled = temp_ano_tiva_vs_inhaled[275:]
+
+# Compute mean and standard deviation over 'config'
+mean_temp_tiva_vs_inhaled = temp_tiva_vs_inhaled.mean(dim='config')
+std_temp_tiva_vs_inhaled = temp_tiva_vs_inhaled.std(dim='config')
+
+# Convert to numpy for plotting
+time_np_tiva_vs_inhaled = time_tiva_vs_inhaled
+mean_np_tiva_vs_inhaled = mean_temp_tiva_vs_inhaled.values
+std_np_tiva_vs_inhaled = std_temp_tiva_vs_inhaled.values
+
+p05_tiva_vs_inhaled = temp_tiva_vs_inhaled.quantile(0.05, dim='config')
+p95_tiva_vs_inhaled = temp_tiva_vs_inhaled.quantile(0.95, dim='config')
+
+# Tiva-abrupt vs inhaled
+plt.plot(time_np_tiva_vs_inhaled, mean_np_tiva_vs_inhaled, label='Mean Inhaled')
+plt.fill_between(time_np_tiva_vs_inhaled, p05_tiva_vs_inhaled, p95_tiva_vs_inhaled, alpha=0.3, label='5-95% percentile Inhaled')
+
+plt.title('Central scenario: temperature')
+plt.xlabel('Year')
+plt.ylabel('Temperature anomaly (K)')
+plt.legend()
+plt.show()
+
+# %%
+
+# %%
+# TODO: I dont' understand why this is not 0, need to ask Chris about it
+# Load anaesthesics files, but set all anesthesics emissions to 0, so we should expect all 0...
+f_anes_0 = FAIR()
+f_anes_0.define_time(1750, 2500, 1)
+f_anes_0.define_scenarios(scenarios)
+f_anes_0.define_configs(configs)
+species_anes_0, properties_anes_0 = read_properties("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
+f_anes_0.define_species(species_anes_0, properties_anes_0)
+f_anes_0.allocate()
+f_anes_0.fill_from_csv(
+    forcing_file='../data/forcing/volcanic_solar.csv',
+)
+da_emissions = xr.load_dataarray("../data/emissions/ssp_emissions_1750-2500_anesthesics.nc")
+output_ensemble_size = len(configs)
+da = da_emissions.loc[dict(config="unspecified", scenario=scenarios)]
+fe = da.expand_dims(dim=["config"], axis=(2))
+f_anes_0.emissions = fe.drop_vars(("config")) * np.ones((1, 1, output_ensemble_size, 1))
+
+# Load inhaled emissions, but set them at 0 after 2025
+# Prepare the new emissions
+anesthesics_df = pd.read_csv("../data/emissions/anesthesics_gas_emissions.csv")
+
+species1_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "HFE-236ea2") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_1 = species1_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_1[275:, :] = 0
+emissions_1 = emissions_1[:, :, np.newaxis]
+emissions_1 = np.repeat(emissions_1, len(configs), axis=2)
+
+species2_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "HFE-347mmz1") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_2 = species2_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_2[275:, :] = 0
+emissions_2 = emissions_2[:, :, np.newaxis]
+emissions_2 = np.repeat(emissions_2, len(configs), axis=2)
+
+species3_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "HCFE-235da2") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_3 = species3_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_3[275:, :] = 0
+emissions_3 = emissions_3[:, :, np.newaxis]
+emissions_3 = np.repeat(emissions_3, len(configs), axis=2)
+
+fill(f_anes_0.emissions, 0, specie="HFE-236ea2")
+fill(f_anes_0.emissions, 0, specie="HFE-347mmz1")
+fill(f_anes_0.emissions, 0, specie="HCFE-235da2")
+fill(f_anes_0.emissions, 0, specie="Halon-2311")
+
+# Add TIVA:
+# 0.5 kg of plastic waster per intervention * 300 millions of interventions = 150 millions Kg of plastic waster
+# ~3 Kg of CO2 emissions per Kg of plastic waster burned * 150 millions of kg of plastic waste = 450 millions of CO2 = 0.00045 GtC
+TIVA_emissions = np.zeros(750)
+TIVA_emissions[275:] = 4.5 * 0.0001
+
+# f_anes_0.emissions.loc[dict(specie='CO2 FFI')] = f_anes_0.emissions.loc[dict(specie='CO2 FFI')] + TIVA_emissions[:, np.newaxis, np.newaxis]
+
+f_anes_0.fill_species_configs("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
+initialise(f_anes_0.concentration, f_anes_0.species_configs["baseline_concentration"])
+initialise(f_anes_0.forcing, 0)
+initialise(f_anes_0.temperature, 0)
+initialise(f_anes_0.cumulative_emissions, 0)
+initialise(f_anes_0.airborne_emissions, 0)
+f_anes_0.override_defaults('../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv')
+
+f_anes_0.run()
+
+temp_ano_anes_0 = f_anes_0.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+
+# %%
+# Same plots as before but for T
+
+plt.plot(f_tiva.timebounds[:], temp_ano_anes_0[:])
+plt.title('Central scenario: temperature anomaly of TIVA-abrupt vs reference')
+plt.xlabel('year')
+plt.ylabel('Temperature anomaly (K)')
 plt.show()
