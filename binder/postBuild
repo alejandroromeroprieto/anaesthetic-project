@@ -1,0 +1,5 @@
+#!/bin/bash
+# This script runs automatically after Binder builds the environment
+
+# Enable jupytext in JupyterLab (this is enough in JupyterLab 3+)
+jupyter lab build
