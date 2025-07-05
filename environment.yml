@@ -6,6 +6,7 @@ dependencies:
   - fair=2.2.2
   - jupyter
   - jupytext
+  - jupyterlab
   - matplotlib
   - netcdf4
   - numpy
