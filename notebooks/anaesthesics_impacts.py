@@ -252,7 +252,7 @@ f_tiva_only.emissions = fe.drop_vars(("config")) * np.ones((1, 1, output_ensembl
 TIVA_emissions = np.zeros(750)
 TIVA_emissions[275:] = 4.5 * 0.0001
 
-f_tiva_only.emissions.loc[dict(specie='CO2 FFI')] = f_tiva.emissions.loc[dict(specie='CO2 FFI')] + TIVA_emissions[:, np.newaxis, np.newaxis]
+f_tiva_only.emissions.loc[dict(specie='CO2 FFI')] = f_tiva_only.emissions.loc[dict(specie='CO2 FFI')] + TIVA_emissions[:, np.newaxis, np.newaxis]
 
 f_tiva_only.fill_species_configs("../data/fair-calibration/species_configs_properties_1.4.0_anesthesics.csv")
 initialise(f_tiva_only.concentration, f_tiva_only.species_configs["baseline_concentration"])
@@ -296,9 +296,13 @@ f_no_anesthesics.run()
 # Calculate temperature anomaly differences between experiments
 scenario_to_compare = "ssp245"
 temp_ano_inhaled_vs_reference = f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
-temp_ano_tiva_abrupt_chnage_vs_reference = f_tiva_abrupt_change.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+temp_ano_tiva_abrupt_change_vs_reference = f_tiva_abrupt_change.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
 temp_ano_tiva_abrupt_change_vs_inhaled = f_tiva_abrupt_change.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
-temp_ano_tiva_only_vs_inhaled = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+
+#temp_ano_tiva_only_vs_inhaled = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+#modified by Laurentiu
+temp_ano_tiva_only_vs_reference = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+temp_ano_tiva_only_vs_inhaled = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
 
 # %%
 plt.plot(f_inhaled.timebounds[150:], temp_ano_inhaled_vs_reference[150:])
@@ -354,7 +358,7 @@ plt.show()
 # %%
 # Same plots as before but for T
 
-plt.plot(f_tiva.timebounds[150:], temp_ano_tiva_vs_reference[150:])
+plt.plot(f_tiva_abrupt_change.timebounds[150:], temp_ano_tiva_abrupt_change_vs_reference[150:])
 plt.title('Central scenario: temperature anomaly of TIVA-abrupt vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
@@ -363,7 +367,7 @@ plt.show()
 # %%
 # Slice the relevant part of the data
 time_tiva_abrupt_change = f_tiva_abrupt_change.timebounds[150:]
-temp_tiva_abrupt_change = temp_ano_tiva_abrupt_chnage_vs_reference[150:]
+temp_tiva_abrupt_change = temp_ano_tiva_abrupt_change_vs_reference[150:]
 
 # Compute mean and standard deviation over 'config'
 mean_temp_tiva_abrupt_change = temp_tiva_abrupt_change.mean(dim='config')
