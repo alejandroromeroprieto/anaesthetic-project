@@ -300,9 +300,11 @@ temp_ano_tiva_abrupt_change_vs_reference = f_tiva_abrupt_change.temperature.loc[
 temp_ano_tiva_abrupt_change_vs_inhaled = f_tiva_abrupt_change.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
 
 #temp_ano_tiva_only_vs_inhaled = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
-#modified by Laurentiu
-temp_ano_tiva_only_vs_reference = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+#Laurentiu: modified, see next line. Is it correct like this or rather next line is the correct one?
 temp_ano_tiva_only_vs_inhaled = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+
+#Laurentiu: added this new line, to define the function
+temp_ano_tiva_only_vs_reference = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
 
 # %%
 plt.plot(f_inhaled.timebounds[150:], temp_ano_inhaled_vs_reference[150:])
