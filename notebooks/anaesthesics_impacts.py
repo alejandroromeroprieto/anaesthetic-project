@@ -110,12 +110,19 @@ emissions_3 = species3_df.loc[:, '1751':'2500'].astype(float).values.T
 emissions_3 = emissions_3[:, :, np.newaxis]
 emissions_3 = np.repeat(emissions_3, len(configs), axis=2)
 
-
+# %%
+species4_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "Halon-2311") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_4 = species4_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_4 = emissions_4[:, :, np.newaxis]
+emissions_4 = np.repeat(emissions_4, len(configs), axis=2)
 # %%
 fill(f_inhaled.emissions, emissions_1, specie="HFE-236ea2")
 fill(f_inhaled.emissions, emissions_2, specie="HFE-347mmz1")
 fill(f_inhaled.emissions, emissions_3, specie="HCFE-235da2")
-fill(f_inhaled.emissions, 0, specie="Halon-2311")
+fill(f_inhaled.emissions, emissions_4, specie="Halon-2311")
 
 # %% [markdown]
 # 8a. Fill in data - species configs
