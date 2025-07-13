@@ -213,7 +213,7 @@ emissions_3 = np.repeat(emissions_3, len(configs), axis=2)
 fill(f_tiva_abrupt_change.emissions, emissions_1, specie="HFE-236ea2")
 fill(f_tiva_abrupt_change.emissions, emissions_2, specie="HFE-347mmz1")
 fill(f_tiva_abrupt_change.emissions, emissions_3, specie="HCFE-235da2")
-fill(f_tiva_abrupt_change.emissions, 0, specie="Halon-2311")
+fill(f_tiva_abrupt_change.emissions, emissions_4, specie="Halon-2311")
 
 # Add TIVA:
 # 0.5 kg of plastic waster per intervention * 300 millions of interventions = 150 millions Kg of plastic waster
