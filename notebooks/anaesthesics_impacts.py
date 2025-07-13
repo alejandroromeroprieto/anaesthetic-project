@@ -427,8 +427,8 @@ plt.plot(time_np_tiva_abrupt_change, mean_np_tiva_abrupt_change, label='Mean TIV
 plt.fill_between(time_np_tiva_abrupt_change, p05_tiva_abrupt_change, p95_tiva_abrupt_change, alpha=0.3, label='5-95% percentile TIVA-abrupt vs reference')
 
 # TIVA only
-plt.plot(time_np_tiva_only, mean_np_tiva_only, label='Mean TIVA-abrupt vs reference')
-plt.fill_between(time_np_tiva_only, p05_tiva_only, p95_tiva_only, alpha=0.3, label='5-95% percentile TIVA-abrupt vs reference')
+plt.plot(time_np_tiva_only, mean_np_tiva_only, label='Mean TIVA-only vs reference')
+plt.fill_between(time_np_tiva_only, p05_tiva_only, p95_tiva_only, alpha=0.3, label='5-95% percentile TIVA-only vs reference')
 
 plt.title('Central scenario: temperature')
 plt.xlabel('Year')
