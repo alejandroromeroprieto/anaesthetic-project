@@ -230,6 +230,7 @@ species4_df = anesthesics_df[
     (anesthesics_df["Scenario"].isin(scenarios))
 ]
 emissions_4_tiva_abrupt_change = species4_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_4_tiva_abrupt_change[275:, :] = 0
 emissions_4_tiva_abrupt_change = emissions_4_tiva_abrupt_change[:, :, np.newaxis]
 emissions_4_tiva_abrupt_change = np.repeat(emissions_4_tiva_abrupt_change, len(configs), axis=2)
 
@@ -343,7 +344,9 @@ temp_ano_tiva_abrupt_change_vs_inhaled = f_tiva_abrupt_change_temperature.loc[di
 temp_ano_tiva_only_vs_reference = f_tiva_only_temperature.loc[dict(scenario=scenario_to_compare)] - f_no_anesthesics_temperature.loc[dict(scenario=scenario_to_compare)]
 
 # %%
-plt.plot(timebounds[150:], temp_ano_inhaled_vs_reference[150:])
+simulation_timebounds = np.arange(1750,2501,1)
+
+plt.plot(simulation_timebounds[150:], temp_ano_inhaled_vs_reference[150:])
 plt.title('Central scenario: temperature anomaly of inhaled vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
@@ -354,7 +357,7 @@ plt.show()
 
 # %%
 # Slice the relevant part of the data
-time_inhaled = f_inhaled.timebounds[150:]
+time_inhaled = simulation_timebounds[150:]
 temp_inhaled = temp_ano_inhaled_vs_reference[150:]
 
 # Compute mean and standard deviation over 'config'
@@ -396,7 +399,7 @@ plt.show()
 # %%
 # Same plots as before but for T
 
-plt.plot(f_tiva_abrupt_change.timebounds[150:], temp_ano_tiva_abrupt_change_vs_reference[150:])
+plt.plot(simulation_timebounds[150:], temp_ano_tiva_abrupt_change_vs_reference[150:])
 plt.title('Central scenario: temperature anomaly of TIVA-abrupt vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
@@ -404,7 +407,7 @@ plt.show()
 
 # %%
 # Slice the relevant part of the data
-time_tiva_abrupt_change = f_tiva_abrupt_change.timebounds[150:]
+time_tiva_abrupt_change = simulation_timebounds[150:]
 temp_tiva_abrupt_change = temp_ano_tiva_abrupt_change_vs_reference[150:]
 
 # Compute mean and standard deviation over 'config'
@@ -432,7 +435,7 @@ plt.show()
 
 # %%
 # Slice the relevant part of the data
-time_tiva_only = f_tiva_only.timebounds[150:]
+time_tiva_only = simulation_timebounds[150:]
 temp_tiva_only = temp_ano_tiva_only_vs_reference[150:]
 
 # Compute mean and standard deviation over 'config'
@@ -481,7 +484,7 @@ plt.show()
 # %%
 # Temperature anomaly between business as usual (inhaled) and abrupt TIVA 
 # Slice the relevant part of the data
-time_tiva_abrupt_change_vs_inhaled = f_tiva_abrupt_change.timebounds[275:]
+time_tiva_abrupt_change_vs_inhaled = simulation_timebounds[275:]
 temp_tiva_abrupt_change_vs_inhaled = temp_ano_tiva_abrupt_change_vs_inhaled[275:]
 
 # Compute mean and standard deviation over 'config'
@@ -580,13 +583,17 @@ f_anes_0.override_defaults('../data/fair-calibration/calibrated_constrained_para
 
 f_anes_0.run()
 
-temp_ano_anes_0 = f_anes_0.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+temp_ano_anes_0 = f_anes_0.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics_temperature.loc[dict(scenario=scenario_to_compare)]
+
+del f_anes_0
 
 # %%
 # Same plots as before but for T
 
-plt.plot(f_tiva_abrupt_change.timebounds[:], temp_ano_anes_0[:])
+plt.plot(simulation_timebounds, temp_ano_anes_0[:])
 plt.title('Central scenario: temperature anomaly of TIVA-abrupt vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
 plt.show()
+
+# %%
