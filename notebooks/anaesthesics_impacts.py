@@ -41,7 +41,7 @@ f_inhaled.define_scenarios(scenarios)
 # f.define_configs(configs)
 
 fair_params_1_4_0 = '../data/fair-calibration/calibrated_constrained_parameters_1.4.0_plus_anaesthesics.csv'
-df_configs = pd.read_csv(fair_params_1_4_0, index_col=0)[400:500]
+df_configs = pd.read_csv(fair_params_1_4_0, index_col=0)#[400:500]
 configs = df_configs.index  # label for the "config" axis
 f_inhaled.define_configs(configs)
 
@@ -126,10 +126,11 @@ fill(f_inhaled.emissions, emissions_4, specie="Halon-2311")
 
 # %%
 # For diagnosis purposes, just plot these emissions timeseries
-plt.plot(np.arange(1750,2500,1), emissions_1[:, 0, 0], label="HFE-236ea2")
-plt.plot(np.arange(1750,2500,1), emissions_2[:, 0, 0], label="HFE-347mmz1")
-plt.plot(np.arange(1750,2500,1), emissions_3[:, 0, 0], label="HCFE-235da2")
-plt.plot(np.arange(1750,2500,1), emissions_4[:, 0, 0], label="Halon-2311")
+timebounds = np.arange(1750,2500,1)
+plt.plot(timebounds, emissions_1[:, 0, 0], label="HFE-236ea2")
+plt.plot(timebounds, emissions_2[:, 0, 0], label="HFE-347mmz1")
+plt.plot(timebounds, emissions_3[:, 0, 0], label="HCFE-235da2")
+plt.plot(timebounds, emissions_4[:, 0, 0], label="Halon-2311")
 plt.legend()
 plt.show()
 
@@ -162,6 +163,11 @@ f_inhaled.override_defaults('../data/fair-calibration/calibrated_constrained_par
 
 # %%
 f_inhaled.run()
+
+# %%
+# To be able to run other simulations and not run out of memory, copy the temperature data that we are interested in and delete the simulation object
+f_inhaled_temperature = f_inhaled.temperature[:,:,:,0].copy(deep=True)
+del f_inhaled
 
 # %% [markdown]
 # 10 Pretty plots!
@@ -250,6 +256,10 @@ f_tiva_abrupt_change.override_defaults('../data/fair-calibration/calibrated_cons
 
 f_tiva_abrupt_change.run()
 
+# To be able to run other simulations and not run out of memory, copy the temperature data that we are interested in and delete the simulation object
+f_tiva_abrupt_change_temperature = f_tiva_abrupt_change.temperature[:,:,:,0].copy(deep=True)
+del f_tiva_abrupt_change
+
 
 # %%
 # Run twin experiment, to calculate only contribution of TIVA-related emissions
@@ -288,6 +298,10 @@ f_tiva_only.override_defaults('../data/fair-calibration/calibrated_constrained_p
 
 f_tiva_only.run()
 
+# To be able to run other simulations and not run out of memory, copy the temperature data that we are interested in and delete the simulation object
+f_tiva_only_temperature = f_tiva_only.temperature[:,:,:,0].copy(deep=True)
+del f_tiva_only
+
 
 # %%
 # Run twin experiment, but without anesthesics
@@ -316,16 +330,20 @@ f_no_anesthesics.override_defaults('../data/fair-calibration/calibrated_constrai
 
 f_no_anesthesics.run()
 
+# To be able to run other simulations and not run out of memory, copy the temperature data that we are interested in and delete the simulation object
+f_no_anesthesics_temperature = f_no_anesthesics.temperature[:,:,:,0].copy(deep=True)
+del f_no_anesthesics
+
 # %%
 # Calculate temperature anomaly differences between experiments
 scenario_to_compare = "ssp245"
-temp_ano_inhaled_vs_reference = f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
-temp_ano_tiva_abrupt_change_vs_reference = f_tiva_abrupt_change.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
-temp_ano_tiva_abrupt_change_vs_inhaled = f_tiva_abrupt_change.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_inhaled.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
-temp_ano_tiva_only_vs_reference = f_tiva_only.temperature.loc[dict(scenario=scenario_to_compare, layer=0)] - f_no_anesthesics.temperature.loc[dict(scenario=scenario_to_compare, layer=0)]
+temp_ano_inhaled_vs_reference = f_inhaled_temperature.loc[dict(scenario=scenario_to_compare)] - f_no_anesthesics_temperature.loc[dict(scenario=scenario_to_compare)]
+temp_ano_tiva_abrupt_change_vs_reference = f_tiva_abrupt_change_temperature.loc[dict(scenario=scenario_to_compare)] - f_no_anesthesics_temperature.loc[dict(scenario=scenario_to_compare)]
+temp_ano_tiva_abrupt_change_vs_inhaled = f_tiva_abrupt_change_temperature.loc[dict(scenario=scenario_to_compare)] - f_inhaled_temperature.loc[dict(scenario=scenario_to_compare)]
+temp_ano_tiva_only_vs_reference = f_tiva_only_temperature.loc[dict(scenario=scenario_to_compare)] - f_no_anesthesics_temperature.loc[dict(scenario=scenario_to_compare)]
 
 # %%
-plt.plot(f_inhaled.timebounds[150:], temp_ano_inhaled_vs_reference[150:])
+plt.plot(timebounds[150:], temp_ano_inhaled_vs_reference[150:])
 plt.title('Central scenario: temperature anomaly of inhaled vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
@@ -572,5 +590,3 @@ plt.title('Central scenario: temperature anomaly of TIVA-abrupt vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
 plt.show()
-
-# %%
