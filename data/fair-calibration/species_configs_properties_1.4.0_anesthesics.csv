@@ -2,7 +2,7 @@ name,type,input_mode,greenhouse_gas,aerosol_chemistry_from_emissions,aerosol_che
 CO2 FFI,co2 ffi,emissions,0,0,0,nan,nan,nan,nan,nan,nan,nan,nan,0,1,0,1,nan,nan,nan,nan,nan,nan,nan,0,nan,nan,nan,nan,nan,0,nan,nan,nan,0,nan,nan,nan,0,nan,nan
 CO2 AFOLU,co2 afolu,emissions,0,0,0,nan,nan,nan,nan,nan,nan,nan,nan,0,1,0,1,nan,nan,nan,nan,nan,nan,nan,0,nan,nan,nan,nan,nan,-0.00028729,nan,nan,nan,0,nan,nan,nan,0,nan,nan
 CO2,co2,calculated,1,0,0,0.2173,0.224,0.2824,0.2763,1000000000,394.4,36.54,4.304,0.05,1,0,1,44.009,278.3,277.15,nan,nan,nan,nan,0,11.41262243,0.010178288,nan,0,0,nan,0,0,0,0,nan,nan,nan,0,nan,nan
-CH4,ch4,emissions,1,0,1,1,0,0,0,10.0069821,10.0069821,10.0069821,10.0069821,-0.14,1,0,1,16.043,729.2,731.41,nan,nan,nan,nan,19.01978312,8.249410814,0.36785517,nan,4.4E-05,0,0,0,0,0,0.000254099,-0.0408,nan,nan,0,nan,nan
+CH4,ch4,emissions,1,0,1,1,0,0,0,10.0069821,10.0069821,10.0069821,10.0069821,-0.14,1,0,1,16.043,729.2,731.41,nan,nan,nan,nan,19.01978312,8.249410814,0.36785517,nan,4.40E-05,0,0,0,0,0,0.000254099,-0.0408,nan,nan,0,nan,nan
 N2O,n2o,emissions,1,0,1,1,0,0,0,109,109,109,109,0.07,1,0,1,44.013,270.1,273.87,65.44969575,0,0,0,0.086022308,25.49528818,0.076755588,nan,0,0,0,0,0,0,-0.000722665,nan,nan,nan,0,nan,nan
 Sulfur,sulfur,emissions,0,1,0,nan,nan,nan,nan,nan,nan,nan,nan,0,1,0,1,64.069,nan,nan,nan,nan,nan,nan,2.440048435,nan,nan,nan,0,0,0,nan,nan,nan,0,nan,nan,nan,0,nan,nan
 BC,black carbon,emissions,0,1,0,nan,nan,nan,nan,nan,nan,nan,nan,0,1,0,1,12.011,nan,nan,nan,nan,nan,nan,2.097770755,nan,nan,nan,0,0.011585926,0,nan,nan,nan,0,nan,nan,nan,0,nan,nan
@@ -37,7 +37,7 @@ C5F12,f-gas,emissions,1,0,0,1,0,0,0,4100,4100,4100,4100,0,1,0,1,288.03,0,0,98.79
 C6F14,f-gas,emissions,1,0,0,1,0,0,0,3100,3100,3100,3100,0,1,0,1,338.04,0,0,98.40430085,0,0,0,0,1.578633139,8.48E-28,0.44888,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
 C7F16,f-gas,emissions,1,0,0,1,0,0,0,3000,3000,3000,3000,0,1,0,1,388.05,0,0,98.35169855,0,0,0,0,1.630088506,6.26E-27,0.50312,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
 C8F18,f-gas,emissions,1,0,0,1,0,0,0,3000,3000,3000,3000,0,1,0,1,438.06,0,0,98.35169855,0,0,0,0,1.630088506,6.26E-27,0.55787,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
-NF3,f-gas,emissions,1,0,0,1,0,0,0,569,569,569,569,0,1,0,1,71.002,0,0,91.70559121,0,0,0,0,7.822566817,8.1E-06,0.20448,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
+NF3,f-gas,emissions,1,0,0,1,0,0,0,569,569,569,569,0,1,0,1,71.002,0,0,91.70559121,0,0,0,0,7.822566817,8.10E-06,0.20448,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
 SF6,f-gas,emissions,1,0,0,1,0,0,0,3200,3200,3200,3200,0,1,0,1,146.06,0,0,98.45364968,0,0,0,0,1.530326228,1.15E-28,0.56657,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
 SO2F2,f-gas,emissions,1,0,0,1,0,0,0,36,36,36,36,0,1,0,1,102.06,0,0,33.76164514,0,0,0,0,27.54399273,0.29354177,0.21074,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
 HFC-125,f-gas,emissions,1,0,0,1,0,0,0,30,30,30,30,0,1,0,1,120.02,0,0,28.9297802,0,0,0,0,25.36238086,0.319608933,0.23378,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
@@ -62,5 +62,5 @@ Land use,land use,calculated,0,0,0,nan,nan,nan,nan,nan,nan,nan,nan,0,1,0,1,nan,n
 Equivalent effective stratospheric chlorine,eesc,calculated,0,0,1,nan,nan,nan,nan,nan,nan,nan,nan,0,1,0,1,35.45,344.3627591,0,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,-5.33E-06,nan,nan,nan,0,nan,nan
 HFE-236ea2,f-gas,emissions,1,0,0,1,0,0,0,13.7,13.7,13.7,13.7,0,1,0,1,168.038,0,0,13.690738,0,0,0,0,13.62313516,0.366058405,0.482,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
 HFE-347mmz1,f-gas,emissions,1,0,0,1,0,0,0,1.41,1.41,1.41,1.41,0,1,0,1,200.056,0,0,1.41,0,0,0,0,1.41,0.367879441,0.369,0,0,0,0,0,0,0,nan,nan,nan,0,nan,nan
-HCFE-235da2,f-gas,emissions,1,0,0,1,0,0,0,3.48,3.48,3.48,3.48,0,1,0,1,184.49,0,0,3.48,0,0,0,0,3.48,0.367879441,0.475,0,0,0,1,0,0,0,nan,nan,nan,0,nan,nan
-Halon-2311,f-gas,emissions,1,0,0,1,0,0,0,1,1,1,1,0,1,0,1,197.38,0,0,1,0,0,0,0,1,0.367879441,0.18,0,0,0,1,1,0,0,nan,nan,nan,0,nan,nan
+HCFE-235da2,f-gas,emissions,1,0,0,1,0,0,0,3.48,3.48,3.48,3.48,0,1,0,1,184.49,0,0,3.48,0,0,0,0,3.48,0.367879441,0.475,0,0,0,1,0,0.85,0,nan,nan,nan,0,nan,nan
+Halon-2311,f-gas,emissions,1,0,0,1,0,0,0,1,1,1,1,0,1,0,1,197.38,0,0,1,0,0,0,0,1,0.367879441,0.18,0,0,0,1,1,2.76,0,nan,nan,nan,0,nan,nan
