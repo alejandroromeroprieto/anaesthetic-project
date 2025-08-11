@@ -124,6 +124,15 @@ fill(f_inhaled.emissions, emissions_2, specie="HFE-347mmz1")
 fill(f_inhaled.emissions, emissions_3, specie="HCFE-235da2")
 fill(f_inhaled.emissions, emissions_4, specie="Halon-2311")
 
+# %%
+# For diagnosis purposes, just plot these emissions timeseries
+plt.plot(np.arange(1750,2500,1), emissions_1[:, 0, 0], label="HFE-236ea2")
+plt.plot(np.arange(1750,2500,1), emissions_2[:, 0, 0], label="HFE-347mmz1")
+plt.plot(np.arange(1750,2500,1), emissions_3[:, 0, 0], label="HCFE-235da2")
+plt.plot(np.arange(1750,2500,1), emissions_4[:, 0, 0], label="Halon-2311")
+plt.legend()
+plt.show()
+
 # %% [markdown]
 # 8a. Fill in data - species configs
 
