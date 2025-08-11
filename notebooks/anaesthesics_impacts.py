@@ -196,33 +196,41 @@ species1_df = anesthesics_df[
     (anesthesics_df["Variable"] == "HFE-236ea2") &
     (anesthesics_df["Scenario"].isin(scenarios))
 ]
-emissions_1 = species1_df.loc[:, '1751':'2500'].astype(float).values.T
-emissions_1[275:, :] = 0
-emissions_1 = emissions_1[:, :, np.newaxis]
-emissions_1 = np.repeat(emissions_1, len(configs), axis=2)
+emissions_1_tiva_abrupt_change = species1_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_1_tiva_abrupt_change[275:, :] = 0
+emissions_1_tiva_abrupt_change = emissions_1_tiva_abrupt_change[:, :, np.newaxis]
+emissions_1_tiva_abrupt_change = np.repeat(emissions_1_tiva_abrupt_change, len(configs), axis=2)
 
 species2_df = anesthesics_df[
     (anesthesics_df["Variable"] == "HFE-347mmz1") &
     (anesthesics_df["Scenario"].isin(scenarios))
 ]
-emissions_2 = species2_df.loc[:, '1751':'2500'].astype(float).values.T
-emissions_2[275:, :] = 0
-emissions_2 = emissions_2[:, :, np.newaxis]
-emissions_2 = np.repeat(emissions_2, len(configs), axis=2)
+emissions_2_tiva_abrupt_change = species2_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_2_tiva_abrupt_change[275:, :] = 0
+emissions_2_tiva_abrupt_change = emissions_2_tiva_abrupt_change[:, :, np.newaxis]
+emissions_2_tiva_abrupt_change = np.repeat(emissions_2_tiva_abrupt_change, len(configs), axis=2)
 
 species3_df = anesthesics_df[
     (anesthesics_df["Variable"] == "HCFE-235da2") &
     (anesthesics_df["Scenario"].isin(scenarios))
 ]
-emissions_3 = species3_df.loc[:, '1751':'2500'].astype(float).values.T
-emissions_3[275:, :] = 0
-emissions_3 = emissions_3[:, :, np.newaxis]
-emissions_3 = np.repeat(emissions_3, len(configs), axis=2)
+emissions_3_tiva_abrupt_change = species3_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_3_tiva_abrupt_change[275:, :] = 0
+emissions_3_tiva_abrupt_change = emissions_3_tiva_abrupt_change[:, :, np.newaxis]
+emissions_3_tiva_abrupt_change = np.repeat(emissions_3_tiva_abrupt_change, len(configs), axis=2)
 
-fill(f_tiva_abrupt_change.emissions, emissions_1, specie="HFE-236ea2")
-fill(f_tiva_abrupt_change.emissions, emissions_2, specie="HFE-347mmz1")
-fill(f_tiva_abrupt_change.emissions, emissions_3, specie="HCFE-235da2")
-fill(f_tiva_abrupt_change.emissions, emissions_4, specie="Halon-2311")
+species4_df = anesthesics_df[
+    (anesthesics_df["Variable"] == "Halon-2311") &
+    (anesthesics_df["Scenario"].isin(scenarios))
+]
+emissions_4_tiva_abrupt_change = species4_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_4_tiva_abrupt_change = emissions_4_tiva_abrupt_change[:, :, np.newaxis]
+emissions_4_tiva_abrupt_change = np.repeat(emissions_4_tiva_abrupt_change, len(configs), axis=2)
+
+fill(f_tiva_abrupt_change.emissions, emissions_1_tiva_abrupt_change, specie="HFE-236ea2")
+fill(f_tiva_abrupt_change.emissions, emissions_2_tiva_abrupt_change, specie="HFE-347mmz1")
+fill(f_tiva_abrupt_change.emissions, emissions_3_tiva_abrupt_change, specie="HCFE-235da2")
+fill(f_tiva_abrupt_change.emissions, emissions_4_tiva_abrupt_change, specie="Halon-2311")
 
 # Add TIVA:
 # 0.5 kg of plastic waster per intervention * 300 millions of interventions = 150 millions Kg of plastic waster
@@ -508,28 +516,28 @@ species1_df = anesthesics_df[
     (anesthesics_df["Variable"] == "HFE-236ea2") &
     (anesthesics_df["Scenario"].isin(scenarios))
 ]
-emissions_1 = species1_df.loc[:, '1751':'2500'].astype(float).values.T
-emissions_1[275:, :] = 0
-emissions_1 = emissions_1[:, :, np.newaxis]
-emissions_1 = np.repeat(emissions_1, len(configs), axis=2)
+emissions_1_0 = species1_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_1_0[275:, :] = 0
+emissions_1_0 = emissions_1_0[:, :, np.newaxis]
+emissions_1_0 = np.repeat(emissions_1_0, len(configs), axis=2)
 
 species2_df = anesthesics_df[
     (anesthesics_df["Variable"] == "HFE-347mmz1") &
     (anesthesics_df["Scenario"].isin(scenarios))
 ]
-emissions_2 = species2_df.loc[:, '1751':'2500'].astype(float).values.T
-emissions_2[275:, :] = 0
-emissions_2 = emissions_2[:, :, np.newaxis]
-emissions_2 = np.repeat(emissions_2, len(configs), axis=2)
+emissions_2_0 = species2_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_2_0[275:, :] = 0
+emissions_2_0 = emissions_2_0[:, :, np.newaxis]
+emissions_2_0 = np.repeat(emissions_2_0, len(configs), axis=2)
 
 species3_df = anesthesics_df[
     (anesthesics_df["Variable"] == "HCFE-235da2") &
     (anesthesics_df["Scenario"].isin(scenarios))
 ]
-emissions_3 = species3_df.loc[:, '1751':'2500'].astype(float).values.T
-emissions_3[275:, :] = 0
-emissions_3 = emissions_3[:, :, np.newaxis]
-emissions_3 = np.repeat(emissions_3, len(configs), axis=2)
+emissions_3_0 = species3_df.loc[:, '1751':'2500'].astype(float).values.T
+emissions_3_0[275:, :] = 0
+emissions_3_0 = emissions_3_0[:, :, np.newaxis]
+emissions_3_0 = np.repeat(emissions_3_0, len(configs), axis=2)
 
 fill(f_anes_0.emissions, 0, specie="HFE-236ea2")
 fill(f_anes_0.emissions, 0, specie="HFE-347mmz1")
