@@ -1,9 +1,9 @@
 # Calculate the fractional release of a species given its ozone depleting power (ODP)
 
 # Data for target species
-odp = 1.6
-total_lifetime = 1
-molecule_mass = 197.38 # g/mol
+odp = 1.56
+total_lifetime = 6.6 # 1
+molecule_mass = 197.4 # g/mol
 number_br_atoms = 1
 number_cl_atoms = 1
 number_io_atoms = 0
