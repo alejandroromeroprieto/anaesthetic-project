@@ -595,5 +595,3 @@ plt.title('Central scenario: temperature anomaly of TIVA-abrupt vs reference')
 plt.xlabel('year')
 plt.ylabel('Temperature anomaly (K)')
 plt.show()
-
-# %%
