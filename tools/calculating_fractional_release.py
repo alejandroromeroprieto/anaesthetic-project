@@ -13,7 +13,7 @@ fractional_release_CFC_11 = 0.47
 total_lifetime_CFC_11 = 52 # years
 molecule_mass_CFC_11 = 137.36
 
-rel_factor_br = 50
+rel_factor_br = 50 # as in langbein
 rel_factor_io = 240
 
 new_fractional_release = 3 * (fractional_release_CFC_11 / (number_cl_atoms + number_br_atoms*rel_factor_br + number_io_atoms*rel_factor_io)) * odp * (total_lifetime_CFC_11/total_lifetime) * (molecule_mass/molecule_mass_CFC_11)
