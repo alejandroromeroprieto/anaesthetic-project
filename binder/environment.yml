@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.12
-  - fair=2.2.2
+  - fair=2.2.4
   - jupyter
   - jupyterlab
   - jupytext
