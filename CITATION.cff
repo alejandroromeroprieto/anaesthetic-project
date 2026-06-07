@@ -1,0 +1,53 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Climate modelling comparing volatile anaesthetics and
+  total intravenous anaesthesia using FaIR v2.2.4
+message: >-
+  Software used for the publication: "Global temperature
+  effect of general anaesthesia: a climate modelling study
+  comparing volatile anaesthetic agents and total
+  intravenous anaesthesia (1956–2500)" 
+type: software
+authors:
+  - given-names: Alejandro
+    family-names: Romero Prieto
+    orcid: 'https://orcid.org/0009-0005-8522-7697'
+    affiliation: University of Leeds
+  - given-names: Laurentiu
+    family-names: Marin
+    affiliation: Praxis Dr Marin
+    orcid: 'https://orcid.org/0000-0001-8837-8080'
+  - affiliation: Vrije Universiteit Brussel
+    orcid: 'https://orcid.org/0000-0003-0599-4633'
+    given-names: Chris
+    family-names: Smith
+identifiers:
+  - type: doi
+    value: 10.5281/to_be_added.xxxxx
+repository-code: >-
+  https://github.com/alejandroromeroprieto/anaesthetic-project.git
+abstract: >-
+  The environmental impact of anaesthetic agents has been
+  evaluated almost exclusively through global warming
+  potential (GWP) and CO2-equivalent metrics. These
+  frameworks have been criticised for failing to capture the
+  dynamic response of the climate system to short-lived
+  climate forcers like volatile anaesthetics and may provide
+  a misleading basis for clinical guidelines and healthcare
+  policy. We aimed to quantify the actual global mean
+  surface temperature effect of general anaesthesia using a
+  physically-based reduced-complexity climate model, and to
+  compare the temperature trajectories of different
+  anaesthetic strategies under different policy scenarios. 
+keywords:
+  - desflurane
+  - climate change
+  - volatile anaesthetics
+  - TIVA
+  - FaIR
+  - educed-complexity climate model
+license: MIT
+date-released: '2026-05-02'
